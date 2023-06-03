@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reals/responsive/mobile_screen_layout.dart';
 import 'package:reals/responsive/responisve_layout_screen.dart';
 import 'package:reals/responsive/web_screen_layout.dart';
-import 'package:reals/screens/login_screen.dart';
+import 'package:reals/screens/signup_screen.dart';
 import 'package:reals/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: mobileBackgroundColor,
         ),
-        home: const LoginScreen()
+        home: const SigninScreen()
         // const ResponsiveLayout(
         //   mobileScreenLayout: MobileScreenLayout(),
         //   webScreenLayout: WebScreenLayout(),

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:reals/utils/dimensions.dart';
 
-class TextInputBorder extends StatelessWidget {
+class TextInputFramed extends StatelessWidget {
   final String hint;
   final double leftPadding;
   final double topPadding;
   final double rightPadding;
   final double bottomPadding;
+  final TextEditingController controller;
 
-  const TextInputBorder({
+  const TextInputFramed({
     Key? key,
     required this.hint,
     this.leftPadding = 0,
     this.topPadding = 0,
     this.rightPadding = 0,
     this.bottomPadding = 0,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -36,6 +38,7 @@ class TextInputBorder extends StatelessWidget {
                   ? const BoxConstraints(maxWidth: 300)
                   : const BoxConstraints(),
               child: TextField(
+                controller: controller,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: hint,
