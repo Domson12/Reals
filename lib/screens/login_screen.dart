@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:reals/components/text_input_border.dart';
+import 'package:reals/screens/signup_screen.dart';
 import 'package:reals/utils/colors.dart';
+import 'package:reals/resources/auth_methods.dart';
+import 'package:reals/utils/utils.dart';
+
+import '../responsive/mobile_screen_layout.dart';
+import '../responsive/responisve_layout_screen.dart';
+import '../responsive/web_screen_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -12,16 +19,44 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _bioController.dispose();
-    _usernameController.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String authResult = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+    if (authResult != "success") {
+      showSnackBar(context, authResult);
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            webScreenLayout: WebScreenLayout(),
+            mobileScreenLayout: MobileScreenLayout(),
+          ),
+        ),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void navigateToSingin() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SigninScreen(),
+      ),
+    );
   }
 
   @override
@@ -38,32 +73,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: primaryColor,
                 height: 75,
               ),
-
               const SizedBox(height: 75),
-
               TextInputFramed(
                 hint: "Enter Email",
                 bottomPadding: 45,
                 controller: _emailController,
               ),
-
               TextInputFramed(
                 hint: "Enter Password",
                 controller: _passwordController,
               ),
-
               const SizedBox(
                 height: 14,
               ),
-
-              const ElevatedButton(
-                onPressed: null,
-                style: ButtonStyle(),
-                child: Text(
-                  "Log In",
-                ),
+              ElevatedButton(
+                onPressed: loginUser,
+                style: const ButtonStyle(),
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(color: primaryColor),
+                      )
+                    : const Text("Log In"),
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -73,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text("Do you not have an account?"),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: navigateToSingin,
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: const Text(

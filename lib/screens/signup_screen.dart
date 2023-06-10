@@ -1,6 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:reals/components/text_input_border.dart';
+import 'package:reals/resources/auth_methods.dart';
+import 'package:reals/responsive/mobile_screen_layout.dart';
+import 'package:reals/responsive/responisve_layout_screen.dart';
+import 'package:reals/responsive/web_screen_layout.dart';
+import 'package:reals/screens/login_screen.dart';
 import 'package:reals/utils/colors.dart';
+import 'package:reals/utils/utils.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({Key? key}) : super(key: key);
@@ -14,6 +22,8 @@ class _SigninScreenState extends State<SigninScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -22,6 +32,61 @@ class _SigninScreenState extends State<SigninScreen> {
     _passwordController.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+  }
+
+  void selectImage() async {
+    Uint8List image = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+  }
+
+  ImageProvider<Object>? getProfileImageProvider() {
+    if (_image == null) {
+      return const NetworkImage(
+        'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg',
+      );
+    } else {
+      return MemoryImage(_image!);
+    }
+  }
+
+  signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String authResult = await AuthMethods().signupUser(
+        email: _emailController.text,
+        password: _passwordController.text,
+        username: _usernameController.text,
+        bio: _bioController.text,
+        file: _image!);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (authResult != 'success') {
+      showSnackBar(context, authResult);
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            webScreenLayout: WebScreenLayout(),
+            mobileScreenLayout: MobileScreenLayout(),
+          ),
+        ),
+      );
+    }
+  }
+
+  void navigateToLogin() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
   }
 
   @override
@@ -41,14 +106,15 @@ class _SigninScreenState extends State<SigninScreen> {
               const SizedBox(height: 75),
               Stack(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 64,
-                    backgroundImage: NetworkImage(
-                        'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=686&q=80'),
+                    backgroundImage: getProfileImageProvider(),
                   ),
                   Positioned(
+                    bottom: -10,
+                    left: 95,
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: selectImage,
                       icon: const Icon(Icons.add_a_photo),
                     ),
                   )
@@ -56,7 +122,7 @@ class _SigninScreenState extends State<SigninScreen> {
               ),
               const SizedBox(
                 height: 24,
-               ),
+              ),
               TextInputFramed(
                 hint: "Enter Username",
                 bottomPadding: 45,
@@ -79,12 +145,16 @@ class _SigninScreenState extends State<SigninScreen> {
               const SizedBox(
                 height: 14,
               ),
-              const ElevatedButton(
-                onPressed: null,
-                style: ButtonStyle(),
-                child: Text(
-                  "Sign In",
-                ),
+              ElevatedButton(
+                onPressed: signUpUser,
+                style: const ButtonStyle(),
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      )
+                    : const Text('Sign In'),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +165,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     child: const Text("Do you have an account?"),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: navigateToLogin,
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: const Text(
