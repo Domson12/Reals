@@ -8,6 +8,7 @@ class TextInputFramed extends StatelessWidget {
   final double rightPadding;
   final double bottomPadding;
   final TextEditingController controller;
+  final bool obscureText;
 
   const TextInputFramed({
     Key? key,
@@ -16,6 +17,7 @@ class TextInputFramed extends StatelessWidget {
     this.topPadding = 0,
     this.rightPadding = 0,
     this.bottomPadding = 0,
+    this.obscureText = false,
     required this.controller,
   }) : super(key: key);
 
@@ -38,6 +40,7 @@ class TextInputFramed extends StatelessWidget {
                   ? const BoxConstraints(maxWidth: 300)
                   : const BoxConstraints(),
               child: TextField(
+                obscureText: obscureText,
                 controller: controller,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),

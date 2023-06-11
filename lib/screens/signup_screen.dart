@@ -134,6 +134,7 @@ class _SigninScreenState extends State<SigninScreen> {
                 controller: _emailController,
               ),
               TextInputFramed(
+                obscureText: true,
                 hint: "Enter Password",
                 bottomPadding: 45,
                 controller: _passwordController,
