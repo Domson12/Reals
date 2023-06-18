@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reals/utils/dimensions.dart';
+import 'package:reals/utils/global_variables.dart';
 
 class TextInputFramed extends StatelessWidget {
   final String hint;
