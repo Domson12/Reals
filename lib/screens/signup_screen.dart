@@ -94,6 +94,14 @@ class _SigninScreenState extends State<SigninScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: const AssetImage('assets/images/bg.jpg'),
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.6), BlendMode.darken),
+            ),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,23 +114,54 @@ class _SigninScreenState extends State<SigninScreen> {
               const SizedBox(height: 75),
               Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 64,
-                    backgroundImage: getProfileImageProvider(),
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF8A2BE2),
+                          Color(0xFFFF69B4),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: CircleAvatar(
+                      radius: 64,
+                      backgroundImage: getProfileImageProvider(),
+                    ),
                   ),
                   Positioned(
-                    bottom: -10,
-                    left: 95,
-                    child: IconButton(
-                      onPressed: selectImage,
-                      icon: const Icon(Icons.add_a_photo),
+                    bottom: 0,
+                    right: 0,
+                    child: ClipOval(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF8A2BE2),
+                              Color(0xFFFF69B4),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: selectImage,
+                          icon: const Icon(
+                            Icons.add_a_photo,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
-              const SizedBox(
-                height: 24,
-              ),
+              const SizedBox(height: 24),
               TextInputFramed(
                 hint: "Enter Username",
                 bottomPadding: 45,
@@ -140,22 +179,42 @@ class _SigninScreenState extends State<SigninScreen> {
                 controller: _passwordController,
               ),
               TextInputFramed(
-                hint: "enter your bio",
+                hint: "Enter your bio",
                 controller: _bioController,
               ),
-              const SizedBox(
-                height: 14,
-              ),
-              ElevatedButton(
-                onPressed: signUpUser,
-                style: const ButtonStyle(),
-                child: _isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: primaryColor,
-                        ),
-                      )
-                    : const Text('Sign In'),
+              const SizedBox(height: 14),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF8A2BE2),
+                      Color(0xFFFF69B4),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: ElevatedButton(
+                  onPressed: signUpUser,
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    elevation: MaterialStateProperty.all<double>(0),
+                    shape: MaterialStateProperty.all<OutlinedBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        )
+                      : const Text('Sign In'),
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -174,9 +233,9 @@ class _SigninScreenState extends State<SigninScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reals/utils/global_variables.dart';
+
+import '../utils/global_variables.dart';
 
 class TextInputFramed extends StatelessWidget {
   final String hint;
@@ -39,12 +40,31 @@ class TextInputFramed extends StatelessWidget {
               constraints: isWeb
                   ? const BoxConstraints(maxWidth: 300)
                   : const BoxConstraints(),
-              child: TextField(
-                obscureText: obscureText,
-                controller: controller,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: hint,
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF8A2BE2), // Purple color
+                      Color(0xFFFF69B4), // Pink color
+                    ],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8.0),
+                    bottomRight: Radius.circular(8.0),
+                  ),
+                ),
+                child: TextField(
+                  obscureText: obscureText,
+                  controller: controller,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    hintText: hint,
+                    hintStyle: const TextStyle(color: Colors.white),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                  ),
                 ),
               ),
             ),

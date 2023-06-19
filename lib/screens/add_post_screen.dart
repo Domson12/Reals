@@ -108,12 +108,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
     final User user = Provider.of<UserProvider>(context).getUser;
 
     return _file == null
-        ? Center(
-            child: IconButton(
-              icon: const Icon(Icons.upload),
-              onPressed: () => _selectImage(context),
+        ? Scaffold(
+          body: Center(
+              child: IconButton(
+                icon: const Icon(Icons.upload),
+                onPressed: () => _selectImage(context),
+              ),
             ),
-          )
+        )
         : Scaffold(
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
@@ -130,14 +132,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     user.username,
                     user.photoUrl,
                   ),
-                  child: const Text(
-                    'post',
-                    style: TextStyle(
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+                  child: const Icon(
+                   Icons.send,
+                  )
                 )
               ],
             ),
