@@ -8,7 +8,7 @@ import 'package:reals/resources/firestore_methods.dart';
 import 'package:reals/utils/colors.dart';
 import 'package:reals/utils/utils.dart';
 
-import '../model/user.dart';
+import '../../model/user_model.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({Key? key}) : super(key: key);
@@ -105,7 +105,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = Provider.of<UserProvider>(context).getUser;
+    final UserModel user = Provider.of<UserProvider>(context).getUser;
 
     return _file == null
         ? Scaffold(

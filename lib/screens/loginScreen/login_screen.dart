@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:reals/components/text_input_border.dart';
-import 'package:reals/screens/signup_screen.dart';
+import 'package:reals/components/widgets/text_input_border.dart';
+import 'package:reals/screens/signupScreen/signup_screen.dart';
 import 'package:reals/utils/colors.dart';
 import 'package:reals/resources/auth_methods.dart';
 import 'package:reals/utils/utils.dart';
-import '../responsive/mobile_screen_layout.dart';
-import '../responsive/responisve_layout_screen.dart';
-import '../responsive/web_screen_layout.dart';
+import '../../responsive/mobile_screen_layout.dart';
+import '../../responsive/responisve_layout_screen.dart';
+import '../../responsive/web_screen_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

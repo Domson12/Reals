@@ -6,7 +6,7 @@ import 'package:reals/providers/user_provider.dart';
 import 'package:reals/responsive/mobile_screen_layout.dart';
 import 'package:reals/responsive/responisve_layout_screen.dart';
 import 'package:reals/responsive/web_screen_layout.dart';
-import 'package:reals/screens/login_screen.dart';
+import 'package:reals/screens/loginScreen/login_screen.dart';
 import 'package:reals/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 

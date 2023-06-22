@@ -1,18 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:reals/model/user.dart' as model;
+import 'package:reals/model/user_model.dart' as model;
 import 'package:reals/resources/storage_methods.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<model.User> getUserDetails() async {
+  Future<model.UserModel> getUserDetails() async {
     User currentUser = _auth.currentUser!;
     DocumentSnapshot snapshot =
         await _firestore.collection('users').doc(currentUser.uid).get();
-    return model.User.fromSnap(snapshot);
+    return model.UserModel.fromSnap(snapshot);
   }
 
   // Signup user
@@ -44,7 +44,7 @@ class AuthMethods {
             .uploadImageToStorage("profilePicture", file, false);
 
         // Create a user model
-        model.User user = model.User(
+        model.UserModel user = model.UserModel(
           username: username,
           uid: credentials.user!.uid,
           email: email,

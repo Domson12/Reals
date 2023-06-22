@@ -3,9 +3,10 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reals/components/animation/like_animation.dart';
-import 'package:reals/model/user.dart';
+import 'package:reals/model/user_model.dart';
 import 'package:reals/providers/user_provider.dart';
 import 'package:reals/resources/firestore_methods.dart';
+import 'package:reals/screens/commentScreen/comment_screen.dart';
 import 'package:reals/utils/colors.dart';
 
 class PostCard extends StatefulWidget {
@@ -22,7 +23,7 @@ class _PostCardState extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = Provider.of<UserProvider>(context).getUser;
+    final UserModel user = Provider.of<UserProvider>(context).getUser;
     return Container(
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -140,21 +141,31 @@ class _PostCardState extends State<PostCard> {
                 isAnimating: widget.snapshot['likes'].contains(user.uid),
                 smallLike: true,
                 child: IconButton(
-                  onPressed: () async {
-                    FirestoreMethods().likePost(
-                      widget.snapshot['postId'],
-                      user.uid,
-                      widget.snapshot['likes'],
-                    );
-                  },
-                  icon:widget.snapshot['likes'].contains(user.uid)? const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  ): const Icon(Icons.favorite, color: Colors.white,)
-                ),
+                    onPressed: () async {
+                      FirestoreMethods().likePost(
+                        widget.snapshot['postId'],
+                        user.uid,
+                        widget.snapshot['likes'],
+                      );
+                    },
+                    icon: widget.snapshot['likes'].contains(user.uid)
+                        ? const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : const Icon(
+                            Icons.favorite,
+                            color: Colors.white,
+                          )),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CommentScreen(
+                      snapshot: widget.snapshot,
+                    ),
+                  ),
+                ),
                 icon: const Icon(
                   Icons.comment_sharp,
                 ),
