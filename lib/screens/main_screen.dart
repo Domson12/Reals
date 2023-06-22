@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:reals/utils/colors.dart';
 
@@ -23,7 +24,24 @@ class MainScreen extends StatelessWidget {
           )
         ],
       ),
-      body: const PostCard(),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('post').snapshots(),
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) => PostCard(
+              snapshot: snapshot.data!.docs[index].data()
+
+            ),
+          );
+        },
+      ),
     );
   }
 }
