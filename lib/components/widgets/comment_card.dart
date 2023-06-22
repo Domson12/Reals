@@ -1,26 +1,34 @@
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-
+import '../../model/user_model.dart';
+import '../../providers/user_provider.dart';
+import '../../resources/firestore_methods.dart';
+import '../animation/like_animation.dart';
 
 class CommentCard extends StatefulWidget {
+  final snapshot;
 
-  const CommentCard({Key? key}) : super(key: key);
+  const CommentCard({Key? key, required this.snapshot}) : super(key: key);
 
   @override
   State<CommentCard> createState() => _CommentCardState();
 }
 
 class _CommentCardState extends State<CommentCard> {
+  bool isLikeAnimating = false;
+
   @override
   Widget build(BuildContext context) {
+    final UserModel user = Provider.of<UserProvider>(context).getUser;;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(''),
+            backgroundImage: NetworkImage(widget.snapshot['profileImage']),
             radius: 18,
           ),
           Expanded(
@@ -34,11 +42,11 @@ class _CommentCardState extends State<CommentCard> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: 'username',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          text: widget.snapshot['username'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: 'description',
+                          text: ' ${widget.snapshot['text']}',
                         ),
                       ],
                     ),
@@ -46,8 +54,10 @@ class _CommentCardState extends State<CommentCard> {
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '16/06/2023',
-                      style: TextStyle(
+                      DateFormat.yMMMd().format(
+                        widget.snapshot['datePublished'].toDate(),
+                      ),
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                       ),
@@ -57,11 +67,27 @@ class _CommentCardState extends State<CommentCard> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: const Icon(
-              Icons.favorite,
-              size: 20,
+          LikeAnimation(
+            isAnimating: widget.snapshot['likes'].contains(user.uid),
+            smallLike: true,
+            child: IconButton(
+              onPressed: () async {
+                FirestoreMethods().likeComment(
+                  widget.snapshot['postId'],
+                  widget.snapshot['uid'],
+                  widget.snapshot['likes'],
+                  widget.snapshot['commentId'],
+                );
+              },
+              icon: widget.snapshot['likes'].contains(user.uid)
+                  ? const Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    )
+                  : const Icon(
+                      Icons.favorite,
+                      color: Colors.white,
+                    ),
             ),
           ),
         ],

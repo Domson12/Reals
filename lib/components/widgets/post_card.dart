@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reals/components/animation/like_animation.dart';
@@ -20,6 +20,29 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+  int commentLength = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  Future<String> getComments() async {
+    String resource = 'error occurred';
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('post')
+          .doc(widget.snapshot['postId'])
+          .collection('comments')
+          .get();
+      commentLength = querySnapshot.docs.length;
+      resource = 'success';
+    } catch (e) {
+      resource = e.toString();
+    }
+    return resource;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,22 +164,23 @@ class _PostCardState extends State<PostCard> {
                 isAnimating: widget.snapshot['likes'].contains(user.uid),
                 smallLike: true,
                 child: IconButton(
-                    onPressed: () async {
-                      FirestoreMethods().likePost(
-                        widget.snapshot['postId'],
-                        user.uid,
-                        widget.snapshot['likes'],
-                      );
-                    },
-                    icon: widget.snapshot['likes'].contains(user.uid)
-                        ? const Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          )
-                        : const Icon(
-                            Icons.favorite,
-                            color: Colors.white,
-                          )),
+                  onPressed: () async {
+                    FirestoreMethods().likePost(
+                      widget.snapshot['postId'],
+                      user.uid,
+                      widget.snapshot['likes'],
+                    );
+                  },
+                  icon: widget.snapshot['likes'].contains(user.uid)
+                      ? const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : const Icon(
+                          Icons.favorite,
+                          color: Colors.white,
+                        ),
+                ),
               ),
               IconButton(
                 onPressed: () => Navigator.of(context).push(
@@ -183,10 +207,6 @@ class _PostCardState extends State<PostCard> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.bookmark_add_outlined),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(MaterialCommunityIcons.robot),
                       onPressed: () {},
                     ),
                   ],
@@ -231,11 +251,17 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(
+                        snapshot: widget.snapshot,
+                      ),
+                    ),
+                  ),
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      'view all 100 comments',
+                      'view all $commentLength comments',
                       style:
                           const TextStyle(fontSize: 16, color: secondaryColor),
                     ),

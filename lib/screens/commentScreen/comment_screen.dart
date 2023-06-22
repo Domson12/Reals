@@ -40,7 +40,8 @@ class _CommentScreenState extends State<CommentScreen> {
         stream: FirebaseFirestore.instance
             .collection('post')
             .doc(widget.snapshot['postId'])
-            .collection('comments ')
+            .collection('comments')
+            .orderBy('datePublished', descending: true)
             .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -51,7 +52,9 @@ class _CommentScreenState extends State<CommentScreen> {
           }
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) => CommentCard(),
+            itemBuilder: (context, index) => CommentCard(
+              snapshot: snapshot.data!.docs[index].data(),
+            ),
           );
         },
       ),

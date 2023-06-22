@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:reals/model/comment_model.dart';
@@ -10,7 +9,6 @@ import 'package:uuid/uuid.dart';
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  //upload a Post
   Future<String> uploadPost(String description, Uint8List file, String uid,
       String username, String profileImage) async {
     String resource = 'some error occurred';
@@ -56,6 +54,33 @@ class FirestoreMethods {
     }
   }
 
+  Future<void> likeComment(String postId, String uid, List likes, String commentId) async {
+    try {
+      if (likes.contains(uid)) {
+        await _firestore
+            .collection('post')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayRemove([uid])
+        });
+      } else {
+        await _firestore
+            .collection('post')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId).update({
+          'likes': FieldValue.arrayUnion([uid])
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
   Future<String> addComment(String postId, String text, String uid,
       String username, String profileImage) async {
     String resource = 'some error occurred';
@@ -65,6 +90,7 @@ class FirestoreMethods {
         CommentModel comment = CommentModel(
           uid: uid,
           commentId: commentId,
+          postId: postId,
           username: username,
           text: text,
           profileImage: profileImage,
