@@ -36,11 +36,17 @@ class MainScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) =>
-                PostCard(snapshot: snapshot.data!.docs[index].data()),
-          );
+          if (snapshot.data == null) {
+            return const SnackBar(
+              content: Text('some error occured'),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) =>
+                  PostCard(snapshot: snapshot.data!.docs[index].data()),
+            );
+          }
         },
       ),
     );

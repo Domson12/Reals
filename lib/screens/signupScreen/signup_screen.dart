@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reals/components/widgets/text_input_border.dart';
+import 'package:reals/providers/user_provider.dart';
 import 'package:reals/resources/auth_methods.dart';
 import 'package:reals/responsive/mobile_screen_layout.dart';
 import 'package:reals/responsive/responisve_layout_screen.dart';
@@ -51,17 +52,28 @@ class _SigninScreenState extends State<SigninScreen> {
     }
   }
 
-  signUpUser() async {
+  void signUpUser() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String username = _usernameController.text;
+    String bio = _bioController.text;
+
+    if (email.isEmpty || password.isEmpty || username.isEmpty || bio.isEmpty) {
+      showSnackBar(context, 'Please fill empty fields');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
     String authResult = await AuthMethods().signupUser(
-        email: _emailController.text,
-        password: _passwordController.text,
-        username: _usernameController.text,
-        bio: _bioController.text,
-        file: _image!);
+      email: email,
+      password: password,
+      username: username,
+      bio: bio,
+      file: _image!,
+    );
 
     setState(() {
       _isLoading = false;
@@ -69,6 +81,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
     if (authResult != 'success') {
       showSnackBar(context, authResult);
+      UserProvider().refreshUser();
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -85,6 +98,14 @@ class _SigninScreenState extends State<SigninScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const LoginScreen(),
+      ),
+    );
+  }
+
+  void showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
       ),
     );
   }
@@ -116,14 +137,6 @@ class _SigninScreenState extends State<SigninScreen> {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF8A2BE2),
-                          Color(0xFFFF69B4),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
                       shape: BoxShape.circle,
                     ),
                     padding: const EdgeInsets.all(4),
@@ -137,16 +150,9 @@ class _SigninScreenState extends State<SigninScreen> {
                     right: 0,
                     child: ClipOval(
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(1),
                         decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF8A2BE2),
-                              Color(0xFFFF69B4),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
+                          gradient: blueGradientColor,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
@@ -185,21 +191,14 @@ class _SigninScreenState extends State<SigninScreen> {
               const SizedBox(height: 14),
               Container(
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF8A2BE2),
-                      Color(0xFFFF69B4),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
+                  gradient: blueGradientColor,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: ElevatedButton(
                   onPressed: signUpUser,
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    MaterialStateProperty.all<Color>(Colors.transparent),
                     elevation: MaterialStateProperty.all<double>(0),
                     shape: MaterialStateProperty.all<OutlinedBorder>(
                       RoundedRectangleBorder(
@@ -209,10 +208,10 @@ class _SigninScreenState extends State<SigninScreen> {
                   ),
                   child: _isLoading
                       ? const Center(
-                          child: CircularProgressIndicator(
-                            color: primaryColor,
-                          ),
-                        )
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                    ),
+                  )
                       : const Text('Sign In'),
                 ),
               ),
@@ -221,7 +220,7 @@ class _SigninScreenState extends State<SigninScreen> {
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 3),
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 3),
                     child: const Text("Do you have an account?"),
                   ),
                   GestureDetector(

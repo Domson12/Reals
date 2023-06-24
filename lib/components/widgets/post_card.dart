@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -93,7 +94,20 @@ class _PostCardState extends State<PostCard> {
                           children: ['Delete']
                               .map(
                                 (e) => InkWell(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    if (widget.snapshot['uid'] ==
+                                        FirebaseAuth.instance.currentUser?.uid
+                                            .toString()) {
+                                      FirestoreMethods().deletePost(
+                                        widget.snapshot['postId'],
+                                      );
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      const SnackBar(
+                                        content: Text('it is not your post'),
+                                      );
+                                    }
+                                  },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -183,13 +197,16 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => CommentScreen(
-                      snapshot: widget.snapshot,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(
+                        postId: widget.snapshot['postId'],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                  UserProvider().refreshUser();
+                },
                 icon: const Icon(
                   Icons.comment_sharp,
                 ),
@@ -254,7 +271,7 @@ class _PostCardState extends State<PostCard> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => CommentScreen(
-                        snapshot: widget.snapshot,
+                        postId: widget.snapshot['postId'],
                       ),
                     ),
                   ),

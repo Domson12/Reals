@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import '../../model/user_model.dart';
 import '../../providers/user_provider.dart';
 import '../../resources/firestore_methods.dart';
@@ -19,9 +18,29 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   bool isLikeAnimating = false;
 
+  void toggleLikeComment() async {
+    final UserModel user = Provider.of<UserProvider>(context, listen: false).getUser;
+
+    if (widget.snapshot['likes'].contains(user.uid)) {
+      // User has already liked the comment, so remove their like
+      widget.snapshot['likes'].remove(user.uid);
+    } else {
+      // User has not liked the comment, so add their like
+      widget.snapshot['likes'].add(user.uid);
+    }
+
+    // Update the likes field in the Firestore database
+    await FirestoreMethods().likeComment(
+      widget.snapshot['postId'],
+      user.uid,
+      widget.snapshot['likes'],
+      widget.snapshot['commentId'],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final UserModel user = Provider.of<UserProvider>(context).getUser;;
+    final UserModel user = Provider.of<UserProvider>(context).getUser;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
@@ -71,23 +90,16 @@ class _CommentCardState extends State<CommentCard> {
             isAnimating: widget.snapshot['likes'].contains(user.uid),
             smallLike: true,
             child: IconButton(
-              onPressed: () async {
-                FirestoreMethods().likeComment(
-                  widget.snapshot['postId'],
-                  widget.snapshot['uid'],
-                  widget.snapshot['likes'],
-                  widget.snapshot['commentId'],
-                );
-              },
+              onPressed: toggleLikeComment,
               icon: widget.snapshot['likes'].contains(user.uid)
                   ? const Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    )
+                Icons.favorite,
+                color: Colors.red,
+              )
                   : const Icon(
-                      Icons.favorite,
-                      color: Colors.white,
-                    ),
+                Icons.favorite_border,
+                color: Colors.white,
+              ),
             ),
           ),
         ],

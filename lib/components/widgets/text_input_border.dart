@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../utils/global_variables.dart';
 
 class TextInputFramed extends StatelessWidget {
@@ -41,29 +40,40 @@ class TextInputFramed extends StatelessWidget {
                   ? const BoxConstraints(maxWidth: 300)
                   : const BoxConstraints(),
               child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF8A2BE2), // Purple color
-                      Color(0xFFFF69B4), // Pink color
-                    ],
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    bottomRight: Radius.circular(16.0),
                   ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8.0),
-                    bottomRight: Radius.circular(8.0),
-                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: TextField(
                   obscureText: obscureText,
                   controller: controller,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     hintText: hint,
-                    hintStyle: const TextStyle(color: Colors.white),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                   ),
                 ),
               ),

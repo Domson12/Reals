@@ -9,12 +9,15 @@ import 'package:uuid/uuid.dart';
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String> uploadPost(String description, Uint8List file, String uid,
-      String username, String profileImage) async {
-    String resource = 'some error occurred';
+  Future<String> uploadPost(
+      String description,
+      Uint8List file,
+      String uid,
+      String username,
+      String profileImage,
+      ) async {
     try {
-      String photoUrl =
-          await StorageMethods().uploadImageToStorage("posts", file, true);
+      String photoUrl = await StorageMethods().uploadImageToStorage("posts", file, true);
       String postId = const Uuid().v1();
       PostModel post = PostModel(
         uid: uid,
@@ -26,14 +29,13 @@ class FirestoreMethods {
         datePublished: DateTime.now(),
         likes: [],
       );
-      _firestore.collection('post').doc(postId).set(
-            post.toJson(),
-          );
-      resource = 'success';
+      await _firestore.collection('post').doc(postId).set(
+        post.toJson(),
+      );
+      return 'success';
     } catch (e) {
-      resource = e.toString();
+      rethrow;
     }
-    return resource;
   }
 
   Future<void> likePost(String postId, String uid, List likes) async {
@@ -70,7 +72,8 @@ class FirestoreMethods {
             .collection('post')
             .doc(postId)
             .collection('comments')
-            .doc(commentId).update({
+            .doc(commentId)
+            .update({
           'likes': FieldValue.arrayUnion([uid])
         });
       }
@@ -81,9 +84,13 @@ class FirestoreMethods {
     }
   }
 
-  Future<String> addComment(String postId, String text, String uid,
-      String username, String profileImage) async {
-    String resource = 'some error occurred';
+  Future<String> addComment(
+      String postId,
+      String text,
+      String uid,
+      String username,
+      String profileImage,
+      ) async {
     try {
       if (text.isNotEmpty) {
         String commentId = const Uuid().v1();
@@ -97,23 +104,55 @@ class FirestoreMethods {
           datePublished: DateTime.now(),
           likes: [],
         );
-        _firestore
+        await _firestore
             .collection('post')
             .doc(postId)
             .collection('comments')
             .doc(commentId)
             .set(
-              comment.toJson(),
-            );
-        resource = 'success';
+          comment.toJson(),
+        );
+        return 'success';
       } else {
-        resource = 'text is empty';
+        return 'text is empty';
       }
     } catch (e) {
-      if (kDebugMode) {
-        resource = e.toString();
-      }
+      rethrow;
     }
-    return resource;
+  }
+
+  Future<String> deletePost(String postId) async {
+    try {
+      await _firestore.collection('post').doc(postId).delete();
+      return 'success';
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> followUser(String uid, String followId) async {
+    try {
+      DocumentSnapshot snapshot = await _firestore.collection('users').doc(uid).get();
+      List following = (snapshot.data() as dynamic)['following'];
+
+      if (following.contains(followId)) {
+        await _firestore.collection('users').doc(followId).update({
+          'followers': FieldValue.arrayRemove([uid])
+        });
+        await _firestore.collection('users').doc(uid).update({
+          'following': FieldValue.arrayRemove([followId])
+        });
+      } else {
+        await _firestore.collection('users').doc(followId).update({
+          'followers': FieldValue.arrayUnion([uid])
+        });
+        await _firestore.collection('users').doc(uid).update({
+          'following': FieldValue.arrayUnion([followId])
+        });
+      }
+      return 'success';
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -3,7 +3,9 @@ import 'package:reals/components/widgets/text_input_border.dart';
 import 'package:reals/screens/signupScreen/signup_screen.dart';
 import 'package:reals/utils/colors.dart';
 import 'package:reals/resources/auth_methods.dart';
+import 'package:reals/utils/global_variables.dart';
 import 'package:reals/utils/utils.dart';
+import '../../providers/user_provider.dart';
 import '../../responsive/mobile_screen_layout.dart';
 import '../../responsive/responisve_layout_screen.dart';
 import '../../responsive/web_screen_layout.dart';
@@ -35,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text, password: _passwordController.text);
     if (authResult != "success") {
       showSnackBar(context, authResult);
+      UserProvider().refreshUser();
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -71,7 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Colors.black.withOpacity(0.6), BlendMode.darken),
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: MediaQuery.of(context).size.width > webScreenSize
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -96,14 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF8A2BE2),
-                      Color(0xFFFF69B4),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
+                  gradient: blueGradientColor,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: ElevatedButton(
