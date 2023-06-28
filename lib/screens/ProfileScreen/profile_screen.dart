@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:reals/components/widgets/build_stat_column.dart';
 import 'package:reals/resources/auth_methods.dart';
 import '../../components/widgets/profile_button.dart';
@@ -10,6 +11,7 @@ import '../loginScreen/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String uid;
+
 
   const ProfileScreen({Key? key, required this.uid}) : super(key: key);
 
@@ -95,8 +97,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: Text(
-          userData['username'] ?? '',
+        title: const Text(
+          'Profile Page',
         ),
         centerTitle: false,
       ),
@@ -104,83 +106,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                backgroundImage: NetworkImage(
-                                  userData['photoUrl'],
-                                ),
-                                radius: 40,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.only(
-                                  top: 5,
-                                ),
-                                child: Text(
-                                  userData['username'] ?? '',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
+          : ListView(children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(children: [
+                  Row(children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          backgroundImage: NetworkImage(
+                            userData['photoUrl'],
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    buildStatColumn(
-                                      postLen,
-                                      'Posts',
-                                    ),
-                                    buildStatColumn(
-                                      followers,
-                                      'Followers',
-                                    ),
-                                    buildStatColumn(
-                                      following,
-                                      'Following',
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                ProfileButton(
-                                  onPressed: () {
-                                    AuthMethods().signOut();
-                                  },
-                                  backgroundColor: Colors.white,
-                                  borderColor: Colors.black,
-                                  text: 'Sign out',
-                                  textColor: Colors.black,
-                                  padding: 0,
-                                ),
-                              ],
+                          radius: 40,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.only(
+                            top: 5,
+                          ),
+                          child: Text(
+                            userData['username'] ?? '',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            buildStatColumn(
+                              postLen,
+                              'Posts',
+                            ),
+                            buildStatColumn(
+                              followers,
+                              'Followers',
+                            ),
+                            buildStatColumn(
+                              following,
+                              'Following',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        ProfileButton(
+                          onPressed: () {
+                            AuthMethods().signOut();
+                          },
+                          backgroundColor: Colors.white,
+                          borderColor: Colors.black,
+                          text: 'Sign out',
+                          textColor: Colors.black,
+                          padding: 0,
+                        ),
+                      ]),
+                    ),
+                  ]),
+                ]),
+              ),
+              FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('post')
+                      .where('uid',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .get(),
+                  builder: (context,
+                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                          snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return InkWell(
+                      onTap: () {},
+                      child: Container(
+                        height: 500,
+                        child: MasonryGridView.builder(
+                            scrollDirection: Axis.vertical,
+                            gridDelegate:
+                                const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemCount: snapshot.data!.docs.length,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            itemBuilder: (context, index) {
+                              return ClipRRect(
+                                child: Image.network(
+                                    snapshot.data!.docs[index]['postUrl']),
+                              );
+                            }),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                    );
+                  }),
+            ]),
     );
   }
 }

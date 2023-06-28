@@ -35,6 +35,7 @@ class _LikeAnimationState extends State<LikeAnimation>
     scale = Tween<double>(begin: 1, end: 1.2).animate(animationController);
   }
 
+
   @override
   void didUpdateWidget(covariant LikeAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -59,8 +60,8 @@ class _LikeAnimationState extends State<LikeAnimation>
 
   @override
   void dispose() {
-    super.dispose();
     animationController.dispose();
+    super.dispose();
   }
 
   @override

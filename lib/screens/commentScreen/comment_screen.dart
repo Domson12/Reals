@@ -46,6 +46,11 @@ class _CommentScreenState extends State<CommentScreen> {
       );
     }
   }
+  @override
+  void dispose() {
+    super.dispose();
+    commentEditingController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

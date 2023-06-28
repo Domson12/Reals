@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:reals/providers/user_provider.dart';
 import 'package:reals/utils/colors.dart';
 import 'package:reals/utils/global_variables.dart';
 
@@ -24,8 +22,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   void dispose() {
-    pageController.dispose();
     super.dispose();
+    pageController.dispose();
   }
 
   void navigationTap(int page) {
@@ -40,8 +38,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-
     return Scaffold(
       body: PageView(
         controller: pageController,
@@ -91,10 +87,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             backgroundColor: primaryColor,
           ),
         ],
-        onTap: (page) {
-          navigationTap(page);
-          userProvider.refreshUser(); // Refresh user when changing screens
-        },
+        onTap: navigationTap,
       ),
     );
   }

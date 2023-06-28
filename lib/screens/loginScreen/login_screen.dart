@@ -5,7 +5,6 @@ import 'package:reals/utils/colors.dart';
 import 'package:reals/resources/auth_methods.dart';
 import 'package:reals/utils/global_variables.dart';
 import 'package:reals/utils/utils.dart';
-import '../../providers/user_provider.dart';
 import '../../responsive/mobile_screen_layout.dart';
 import '../../responsive/responisve_layout_screen.dart';
 import '../../responsive/web_screen_layout.dart';
@@ -37,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text, password: _passwordController.text);
     if (authResult != "success") {
       showSnackBar(context, authResult);
-      UserProvider().refreshUser();
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

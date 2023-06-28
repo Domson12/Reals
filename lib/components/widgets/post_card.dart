@@ -104,7 +104,7 @@ class _PostCardState extends State<PostCard> {
                                       Navigator.of(context).pop();
                                     } else {
                                       const SnackBar(
-                                        content: Text('it is not your post'),
+                                        content: Text('its not your post'),
                                       );
                                     }
                                   },

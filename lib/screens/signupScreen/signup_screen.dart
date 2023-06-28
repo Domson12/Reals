@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reals/components/widgets/text_input_border.dart';
-import 'package:reals/providers/user_provider.dart';
 import 'package:reals/resources/auth_methods.dart';
 import 'package:reals/responsive/mobile_screen_layout.dart';
 import 'package:reals/responsive/responisve_layout_screen.dart';
@@ -81,7 +80,6 @@ class _SigninScreenState extends State<SigninScreen> {
 
     if (authResult != 'success') {
       showSnackBar(context, authResult);
-      UserProvider().refreshUser();
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

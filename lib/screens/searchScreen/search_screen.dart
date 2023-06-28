@@ -74,8 +74,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     );
                   },
                 );
-              },
-            )
+              })
           : FutureBuilder(
               future: FirebaseFirestore.instance.collection('post').get(),
               builder: (context,
@@ -86,8 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
                 return InkWell(
-                  onTap: () {
-                  },
+                  onTap: () {},
                   child: MasonryGridView.builder(
                       scrollDirection: Axis.vertical,
                       gridDelegate:
